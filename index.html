@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QiConfirmations | Workspace</title>
+    <!-- Modern Sans-Serif Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --accent-color: #2563eb; 
+            --accent-hover: #1d4ed8;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Top Navigation */
+        nav {
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 10;
+        }
+
+        .brand {
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--text-main);
+        }
+
+        .brand span {
+            color: var(--accent-color);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* Language Switcher */
+        .lang-toggle {
+            display: flex;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 8px;
+            gap: 4px;
+        }
+
+        .lang-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            color: var(--text-muted);
+            background: transparent;
+        }
+
+        .lang-btn.active {
+            background: white;
+            color: var(--accent-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* Main Workspace Area */
+        .main-container {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+        }
+
+        /* Instruction Header (First Row) */
+        .instruction-banner {
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+            margin-bottom: 24px;
+            padding: 20px;
+            background: rgba(37, 99, 235, 0.05);
+            border-radius: 16px;
+            border: 1px solid rgba(37, 99, 235, 0.1);
+        }
+
+        .instruction-banner h2 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 4px;
+        }
+
+        .instruction-banner p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Editor Card */
+        .editor-container {
+            width: 100%;
+            max-width: 900px;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05);
+            min-height: 500px;
+        }
+
+        .editor-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .editor-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        textarea {
+            flex: 1;
+            width: 100%;
+            border: none;
+            padding: 32px;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            font-family: inherit;
+            color: var(--text-main);
+            resize: none;
+            outline: none;
+            background: transparent;
+        }
+
+        /* Action Bar */
+        .actions {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 12px;
+            background: #fdfdfd;
+            border-radius: 0 0 24px 24px;
+        }
+
+        button.action-btn {
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 24px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary { background: var(--accent-color); color: white; }
+        .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+
+        .btn-ghost { background: transparent; color: var(--text-muted); }
+        .btn-ghost:hover { background: #f1f5f9; color: var(--text-main); }
+
+        .btn-danger { color: var(--danger); }
+        .btn-danger:hover { background: #fef2f2; }
+
+        /* Toast Message */
+        #toast {
+            position: fixed;
+            bottom: 100px; /* Kept higher so it doesn't overlap typical floating widget placement */
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-main);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            display: none;
+            z-index: 10000;
+        }
+
+        /* Custom Scrollbar */
+        textarea::-webkit-scrollbar { width: 6px; }
+        textarea::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="brand">Qi<span>Confirmations</span></div>
+    <div class="nav-right">
+        <div class="lang-toggle">
+            <button class="lang-btn active" id="btn-en" onclick="setLanguage('en')">EN</button>
+            <button class="lang-btn" id="btn-es" onclick="setLanguage('es')">ES</button>
+        </div>
+        <div style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">v3.1</div>
+    </div>
+</nav>
+
+<div class="main-container">
+    <!-- Row 1: Details & Instructions -->
+    <div class="instruction-banner">
+        <h2 id="ui-inst-title">Conversational AI Ready</h2>
+        <p id="ui-inst-desc">Click the phone or start button on the floating widget to begin your session.</p>
+    </div>
+
+    <!-- Row 2: Workspace -->
+    <div class="editor-container">
+        <div class="editor-header">
+            <span class="editor-label" id="ui-workspace-label">Drafting Workspace</span>
+        </div>
+        
+        <textarea id="mainWorkspace" placeholder="Start typing..."></textarea>
+
+        <div class="actions">
+            <button class="action-btn btn-primary" onclick="copyContent()" id="ui-copy">
+                Copy Text
+            </button>
+            <button class="action-btn btn-ghost" onclick="downloadFile()" id="ui-export">
+                Export .txt
+            </button>
+            <button class="action-btn btn-ghost btn-danger" style="margin-left: auto;" onclick="clearAll()" id="ui-clear">
+                Clear All
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ElevenLabs Widget (Floating by default) -->
+<elevenlabs-convai agent-id="agent_4501kdpddrjyfq5bb2js693ryq42"></elevenlabs-convai>
+<script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
+
+<!-- Notification Toast -->
+<div id="toast">Copied!</div>
+
+<script>
+    const STORAGE_KEY = 'qially_workspace_state_v3';
+    const LANG_KEY = 'qially_lang_pref';
+    const editor = document.getElementById('mainWorkspace');
+
+    // Translation Dictionary
+    const i18n = {
+        en: {
+            instTitle: "Conversational AI Ready",
+            instDesc: "Click the phone or start button on the floating widget to begin your session.",
+            workspace: "Drafting Workspace",
+            placeholder: "Start typing or paste confirmation text here...",
+            copy: "Copy Text",
+            export: "Export .txt",
+            clear: "Clear All",
+            copied: "Copied to clipboard!",
+            confirmClear: "Clear your workspace?",
+            exportName: "Confirmation"
+        },
+        es: {
+            instTitle: "IA Conversacional Lista",
+            instDesc: "Haga clic en el teléfono o en el botón de inicio en el widget flotante para comenzar su sesión.",
+            workspace: "Espacio de Trabajo",
+            placeholder: "Comience a escribir o pegue el texto de confirmación aquí...",
+            copy: "Copiar Texto",
+            export: "Exportar .txt",
+            clear: "Borrar Todo",
+            copied: "¡Copiado al portapapeles!",
+            confirmClear: "¿Borrar su espacio de trabajo?",
+            exportName: "Confirmacion"
+        }
+    };
+
+    let currentLang = localStorage.getItem(LANG_KEY) || 'en';
+
+    function setLanguage(lang) {
+        currentLang = lang;
+        localStorage.setItem(LANG_KEY, lang);
+        
+        // Update Buttons UI
+        document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+        document.getElementById('btn-es').classList.toggle('active', lang === 'es');
+
+        // Update Text
+        document.getElementById('ui-inst-title').innerText = i18n[lang].instTitle;
+        document.getElementById('ui-inst-desc').innerText = i18n[lang].instDesc;
+        document.getElementById('ui-workspace-label').innerText = i18n[lang].workspace;
+        document.getElementById('mainWorkspace').placeholder = i18n[lang].placeholder;
+        document.getElementById('ui-copy').innerText = i18n[lang].copy;
+        document.getElementById('ui-export').innerText = i18n[lang].export;
+        document.getElementById('ui-clear').innerText = i18n[lang].clear;
+    }
+
+    // Logic Functions
+    function save() {
+        localStorage.setItem(STORAGE_KEY, editor.value);
+    }
+
+    function load() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) editor.value = saved;
+        setLanguage(currentLang);
+    }
+
+    function copyContent() {
+        editor.select();
+        document.execCommand('copy');
+        
+        const toast = document.getElementById('toast');
+        toast.innerText = i18n[currentLang].copied;
+        toast.style.display = 'block';
+        setTimeout(() => toast.style.display = 'none', 2000);
+        
+        window.getSelection().removeAllRanges();
+    }
+
+    function downloadFile() {
+        if (!editor.value) return;
+        const blob = new Blob([editor.value], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const date = new Date().toISOString().slice(0,10);
+        a.download = `${i18n[currentLang].exportName}_${date}.txt`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function clearAll() {
+        if (confirm(i18n[currentLang].confirmClear)) {
+            editor.value = '';
+            save();
+        }
+    }
+
+    // Initialize
+    window.onload = load;
+    editor.addEventListener('input', save);
+</script>
+
+</body>
+</html>
